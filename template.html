@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="robots" content="index, follow">
+		<title>Status</title>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+		<link rel="stylesheet" href="milligram.min.css">
+		<link rel="stylesheet" href="style.css">
+		<link rel="icon" href="favicon.png">
+	</head>
+	<body>
+
+		<main class="wrapper">
+
+			<nav class="navigation">
+				<section class="container">
+
+					<a class="navigation-title" href="">
+						<img class="img" src="logo.png" height="30">
+						<h1 class="title">Status</h1>
+					</a>
+
+
+
+				</section>
+			</nav>
+
+			<section class="container" id="main">
+				{% if panels|length == 0 %}
+					<div class="panel operational">
+						All Systems operational.
+					</div>
+				{% else %}
+					{% for severity, systems in panels.items() if systems %}
+					<div class="panel {{ severity }}">
+						{{ severity.capitalize() }} on {% for system in systems %}{{ system }}{% if not loop.last %}, {% endif %}{% endfor %}.
+					</div>
+					{% endfor %}
+				{% endif %}
+
+				<h4>Systems</h4>
+				<ul class="systems">
+					{% for system, data in systems.items() %}
+					<li>
+						{{ system }} <span class="status {{ data.status }}">{{ data.status }}</span>
+					</li>
+					{% endfor %}
+				</ul>
+
+				<h4>Incidents</h4>
+
+				{% for incident in incidents %}
+        <div class="incident">
+          <span class="date">{{ incident.created }}</span>
+
+          {% if incident.closed %}
+            <span class="label operational float-right">resolved</span>
+          {% else %}
+            <span class="label {{ incident.severity }} float-right">{{ incident.severity }}</span>
+          {% endif %}
+          {% for system in incident.systems %}
+            <span class="label system float-right">{{ system }}</span>
+          {% endfor %}
+          <hr/>
+
+          <span class="title">{{ incident.title }}</span>
+				  <p>{{ incident.body }}</p>
+          {% for update in incident.updates %}
+            <p><em>Update {{ update.created }}</em><br/>
+            {{ update.body }}
+            </p>
+          {% endfor %}
+        </div>
+				{% endfor %}
+			</section>
+
+
+			<footer class="footer">
+				<section class="container">
+					<hr/>
+					<p>Some footer</p>
+				</section>
+			</footer>
+
+		</main>
+
+	</body>
+</html>
